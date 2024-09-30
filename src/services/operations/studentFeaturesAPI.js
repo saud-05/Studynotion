@@ -12,7 +12,7 @@ const {
   SEND_PAYMENT_SUCCESS_EMAIL_API,
 } = studentEndpoints
 
-// Load the Razorpay SDK from the CDN
+
 function loadScript(src) {
   return new Promise((resolve) => {
     const script = document.createElement("script")
