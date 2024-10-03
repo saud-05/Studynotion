@@ -9,7 +9,7 @@ const { convertSecondsToDuration } = require("../utils/secToDuration")
 // Function to create a new course
 exports.createCourse = async (req, res) => {
   try {
-    // Get user ID from request object
+    
     const userId = req.user.id
 
     // Get all required fields from request body
@@ -414,18 +414,18 @@ exports.getFullCourseDetails = async (req, res) => {
   }
 }
 
-// Get a list of Course for a given Instructor
+
 exports.getInstructorCourses = async (req, res) => {
   try {
-    // Get the instructor ID from the authenticated user or request body
+
     const instructorId = req.user.id
 
-    // Find all courses belonging to the instructor
+    
     const instructorCourses = await Course.find({
       instructor: instructorId,
     }).sort({ createdAt: -1 })
 
-    // Return the instructor's courses
+  
     res.status(200).json({
       success: true,
       data: instructorCourses,
@@ -439,18 +439,16 @@ exports.getInstructorCourses = async (req, res) => {
     })
   }
 }
-// Delete the Course
+
 exports.deleteCourse = async (req, res) => {
   try {
     const { courseId } = req.body
 
-    // Find the course
     const course = await Course.findById(courseId)
     if (!course) {
       return res.status(404).json({ message: "Course not found" })
     }
 
-    // Unenroll students from the course
     const studentsEnrolled = course.studentsEnroled
     for (const studentId of studentsEnrolled) {
       await User.findByIdAndUpdate(studentId, {
@@ -458,10 +456,8 @@ exports.deleteCourse = async (req, res) => {
       })
     }
 
-    // Delete sections and sub-sections
     const courseSections = course.courseContent
     for (const sectionId of courseSections) {
-      // Delete sub-sections of the section
       const section = await Section.findById(sectionId)
       if (section) {
         const subSections = section.subSection
@@ -470,11 +466,9 @@ exports.deleteCourse = async (req, res) => {
         }
       }
 
-      // Delete the section
       await Section.findByIdAndDelete(sectionId)
     }
 
-    // Delete the course
     await Course.findByIdAndDelete(courseId)
 
     return res.status(200).json({
